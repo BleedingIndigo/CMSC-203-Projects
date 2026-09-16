@@ -1,0 +1,413 @@
+package CMSC203;
+/*
+Class: CMSC203 CRN 20798
+Program: Assignment #1
+Instructor:Ahmed Tarek
+Summary of Description: You will build a Grade Calculator that reads course grading configuration and student scores, validates all inputs, computes a final numeric average and letter grade, and writes a summary report to a file.
+Due Date: 9/16/2026
+Integrity Pledge: I pledge that I have completed the programming assignment independently.
+I have not copied the code from a student or any source.
+Student Name: Yizhu Wang
+*/
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class GradeCalculator {
+
+	public static void main(String[] cmsc)
+
+    {
+
+		int numberOfCategories;
+
+		int numberOfScores;
+
+		int totalWeight;
+
+		int category1Weight;
+
+		int category2Weight;
+
+		int category3Weight;
+
+		String letterGrade;
+
+		String courseName = " ";
+
+		String gradingChoice; //This is for the +/- grading option, I didn't know what to name the variable so I wrote gradingChoice
+
+		String firstName;
+
+		String lastName; 
+
+		String category1Name;
+
+		String category2Name;
+
+		String category3Name;
+
+		Double category1Average;
+
+		Double category2Average;
+
+		Double category3Average;
+
+		Double score;
+
+		Double overallGradeAverage;
+
+		boolean defaultConfigUsed;
+
+		defaultConfigUsed = false;
+
+		totalWeight = 0;
+
+		numberOfCategories = 3;
+
+		category1Name = "Projects";
+
+		category1Weight = 40;
+
+		category2Name = "Quizzes";
+
+		category2Weight = 30;
+
+		category3Name = "Exams";
+
+		category3Weight = 30;
+
+		category1Average = 0.0;
+
+		category2Average = 0.0;
+
+		category3Average = 0.0;
+
+		try {
+
+			File configFile = new File("gradeconfig.txt");
+
+			Scanner configScanner = new Scanner(configFile);
+
+			courseName = configScanner.nextLine();
+
+			numberOfCategories = configScanner.nextInt();
+
+			category1Name = configScanner.next();
+
+			category1Weight = configScanner.nextInt();
+
+			totalWeight = totalWeight + category1Weight;
+
+			category2Name = configScanner.next();
+
+			category2Weight = configScanner.nextInt();
+
+			totalWeight = totalWeight + category2Weight;
+
+			category3Name = configScanner.next();
+
+			category3Weight = configScanner.nextInt();
+
+			totalWeight = totalWeight + category3Weight;
+
+			configScanner.close();
+
+			if (totalWeight != 100) {
+
+				System.out.println("Invalid configuration, using default configuration.");
+
+				defaultConfigUsed = true;
+
+				numberOfCategories = 3;
+
+                category1Name = "Projects";
+
+                category1Weight = 40;
+
+                category2Name = "Quizzes";
+
+                category2Weight = 30;
+
+                category3Name = "Exams";
+
+                category3Weight = 30;
+
+            }
+
+		} catch (FileNotFoundException e) {
+
+			System.out.println("gradeconfig.txt was not found.");
+
+			System.out.println("Using default configuration.");
+
+			defaultConfigUsed = true;
+
+			numberOfCategories = 3;
+
+			category1Name = "Projects";
+
+			category1Weight = 40;
+
+			category2Name = "Quizzes";
+
+			category2Weight = 30;
+
+			category3Name = "Exams";
+
+			category3Weight = 30;
+
+		}
+
+		System.out.println("====================================================== \n");
+		System.out.println("      * CMSC203 Project 1 - Grade Calculator * \n");
+		System.out.println("====================================================== \n");
+
+		System.out.println("Reading student");
+		System.out.println("scores... \n");
+		try {
+
+            File gradesFile = new File("grades_input.txt");
+
+            Scanner gradesScanner = new Scanner(gradesFile);
+
+            firstName = gradesScanner.nextLine();
+
+            lastName = gradesScanner.nextLine();
+
+            String inputCategoryName;
+
+            for (int category = 1; category <= numberOfCategories; category++) {
+
+                inputCategoryName = gradesScanner.next();
+
+                numberOfScores = gradesScanner.nextInt();
+
+                double totalScore = 0;
+
+                for (int i = 0; i < numberOfScores; i++) {
+
+                    score = gradesScanner.nextDouble();
+
+                    totalScore = totalScore + score;
+
+                }
+
+                if (category == 1) {
+
+                    if (inputCategoryName.equals(category1Name)) {
+
+                        category1Average = totalScore / numberOfScores;
+
+                    } else {
+
+                        System.out.println("Error, Category name does not match " + category1Name);
+
+                    }
+
+                } else if (category == 2) {
+
+                    if (inputCategoryName.equals(category2Name)) {
+
+                        category2Average = totalScore / numberOfScores;
+
+                    } else {
+
+                        System.out.println("Error, Category name does not match " + category2Name);
+
+                    }
+
+                } else if (category == 3) {
+
+                    if (inputCategoryName.equals(category3Name)) {
+
+                        category3Average = totalScore / numberOfScores;
+
+                    } else {
+
+                        System.out.println("Error, Category name does not match " + category3Name);
+
+                    }
+
+                }
+
+            }
+
+            gradesScanner.close();
+
+        } catch (FileNotFoundException e) {
+
+            System.out.println("grades_input.txt was not found.");
+
+            System.out.println("The program cannot calculate the grade, please try again!");
+
+            return;
+
+        }
+
+		System.out.println("Student:  " + firstName + " " + lastName + "\n");
+
+		System.out.println("Course: " + courseName + "\n");
+
+		System.out.println("Category Results: \n");
+
+
+		System.out.printf("  %s (%d%%): average = %.2f%n",
+				category1Name, category1Weight, category1Average);
+
+		System.out.println();
+
+		System.out.printf("  %s (%d%%): average = %.2f%n",
+				category2Name, category2Weight, category2Average);
+
+		System.out.println();
+
+		System.out.printf("  %s (%d%%): average = %.2f%n",
+				category3Name, category3Weight, category3Average);
+
+		System.out.println();
+
+		overallGradeAverage =
+
+                (category1Average * category1Weight / 100)
+
+                + (category2Average * category2Weight / 100)
+
+                + (category3Average * category3Weight / 100);
+
+        if (overallGradeAverage >= 90) {
+
+            letterGrade = "A";
+
+        } else if (overallGradeAverage >= 80) {
+
+            letterGrade = "B";
+
+        } else if (overallGradeAverage >= 70) {
+
+            letterGrade = "C";
+
+        } else if (overallGradeAverage >= 60) {
+
+            letterGrade = "D";
+
+        } else {
+
+            letterGrade = "F";
+
+        }
+
+        String baseLetterGrade = letterGrade;
+
+		Scanner keyboard = new Scanner(System.in);
+
+		System.out.print("Apply +/- grading? (Y/N): ");
+
+		gradingChoice = keyboard.next();
+
+		while (!gradingChoice.equals("Y") && !gradingChoice.equals("y")
+
+                && !gradingChoice.equals("N") && !gradingChoice.equals("n")) {
+
+            System.out.println("Invalid input. Please enter Y or N.");
+
+            System.out.print("Apply +/- grading? (Y/N): ");
+
+            gradingChoice = keyboard.next();
+
+        }
+
+        if (gradingChoice.equals("Y") || gradingChoice.equals("y")) {
+
+            double decimalAmount;
+
+            decimalAmount = overallGradeAverage % 1;
+
+            if (decimalAmount >= 0.50) {
+
+                letterGrade = letterGrade + "+";
+
+            } else if (decimalAmount <= 0.19) {
+
+                letterGrade = letterGrade + "-";
+
+            }
+
+        }
+
+
+		System.out.printf("\n Overall numeric average: %.2f%n", overallGradeAverage);
+
+		System.out.println("\n Base letter grade: " + baseLetterGrade);
+
+		System.out.println("\n Final letter grade: " + letterGrade);
+
+		try {
+			
+            FileWriter outputFile = new FileWriter("grades_report.txt");
+
+            outputFile.write("Student:  " + firstName + " ");
+
+            outputFile.write(lastName + "\n\n");
+
+            outputFile.write("Course: " + courseName + "\n\n");
+
+            outputFile.write("Category Results:\n\n");
+
+            outputFile.write(String.format("  %s (%d%%): average = %.2f%n",
+                    category1Name, category1Weight, category1Average));
+
+            outputFile.write("\n");
+
+            outputFile.write(String.format("  %s (%d%%): average = %.2f%n",
+                    category2Name, category2Weight, category2Average));
+
+            outputFile.write("\n");
+
+            outputFile.write(String.format("  %s (%d%%): average = %.2f%n",
+                    category3Name, category3Weight, category3Average));
+
+            outputFile.write("\n");
+
+            outputFile.write(String.format("Overall numeric average: %.2f%n",
+                    overallGradeAverage));
+
+            outputFile.write("\n");
+
+            outputFile.write("Base letter grade: " + baseLetterGrade + "\n");
+
+            outputFile.write("\n");
+
+            outputFile.write("Final letter grade: " + letterGrade + "\n");
+
+            if (defaultConfigUsed == true) {
+
+                outputFile.write("\nDefault configuration was used.\n");
+
+            }
+
+            outputFile.close();
+
+            System.out.println();
+
+            System.out.println("Summary written");
+
+            System.out.println("to grades_report.txt \n");
+
+            System.out.println("Program complete. \n" + "Have a great day!");
+
+
+        } catch (IOException e) {
+
+            System.out.println("Could not create grades_report.txt, please try again.");
+
+        }
+
+        System.exit(0);
+
+    }
+
+}
